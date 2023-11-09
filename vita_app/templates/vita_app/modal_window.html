@@ -1,0 +1,98 @@
+<script>
+    const phone_check_data = function() {
+        return {
+            is_phones_correct: true,
+            phone: '',
+            phone_repeat: '',
+            check_numbers() {
+                this.is_phones_correct = this.phone == this.phone_repeat
+            }
+        }
+    }
+
+    const perfect_phone_mask = function(input) { // it works great!
+        if (input.startsWith('8')) {
+            return '+7 (a999) 999 99-99'
+        }
+        if (input.startsWith('+')) {
+            return '+7 (999) 999 99-99'
+        }
+        if (input.startsWith('7')) {
+            return '+9 (999) 999 99-99'
+        }
+        return '+7 (999) 999 99-99'
+    }
+</script>
+<div x-data="phone_check_data()">
+    <div class="modal fade"
+         id="exampleModal"
+         tabindex="-1"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                        Заполните данные
+                    </h1>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+                </div>
+                <form action=""
+                      method="post"
+                      class="needs-validation text-center"
+                      id="id_modal_form"
+                      novalidate>
+                    {% csrf_token %}
+                    <div class="modal-body row">
+                        <input name="first_name"
+                               type="text"
+                               class="form-control mt-3 form-control-lg px-2 mx-auto"
+                               placeholder="Имя"
+                               required>
+                        <input name="last_name"
+                               type="text"
+                               class="form-control mt-3 form-control-lg px-2 mx-auto"
+                               placeholder="Фамилия"
+                               required>
+                        <input name="phone"
+                               type="tel"
+                               class="form-control mt-3 form-control-lg px-2 mx-auto"
+                               placeholder="Номер телефона"
+                               x-model="phone"
+                               x-mask:dynamic="perfect_phone_mask"
+                               x-on:keyup.debounce.2500="check_numbers()"
+                               required>
+                        <input name="phone_repeat"
+                               type="tel"
+                               class="form-control mt-3 form-control-lg px-2 mx-auto"
+                               placeholder="Повторите номер телефона"
+                               x-model="phone_repeat"
+                               x-mask:dynamic="perfect_phone_mask"
+                               x-on:keyup.debounce.750="check_numbers()"
+                               required>
+                    </div>
+                    <p x-show="!is_phones_correct" class="text-danger">
+                        Номера не совпадают
+                    </p>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Отмена
+                        </button>
+                        <button x-show="is_phones_correct"
+                                class="btn btn-primary"
+                                x-on:click="check_numbers()">
+                            Подтвердить
+                        </button>
+                        <button x-show="!is_phones_correct" class="btn btn-primary" disabled>
+                            Подтвердить
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
