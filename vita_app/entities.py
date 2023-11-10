@@ -1,5 +1,3 @@
-from typing import List
-
 _days_of_week = {
     0: "Понедельник",
     1: "Вторник",
@@ -43,7 +41,7 @@ class Event():
 
 
 class Day:
-    def __init__(self, number: int = None, day_of_week: str = None, events: List[Event] = None):
+    def __init__(self, number: int = None, day_of_week: str = None, events: list[Event] = None):
         self.number = number
         self.day_of_week = day_of_week
         self.events = events
@@ -69,13 +67,13 @@ class Day:
 
 class Month():
 
-    def __init__(self, days: List[Day], matrix, title):
+    def __init__(self, days: list[Day], matrix, title):
         self.days = days
         self.matrix = matrix
         self.title = title
 
     @classmethod
-    def from_matrix(cls, matrix: List[List[str]], title: str):
+    def from_matrix(cls, matrix: list[list[str]], title: str):
         days = []
         num_of_rows = len(matrix)
         for row in range(0, num_of_rows, 6):

@@ -2,6 +2,8 @@ import os
 
 from aiogram import Bot
 from aiogram.client.session.aiohttp import AiohttpSession
+from aiogram.enums.parse_mode import ParseMode
+from aiogram.utils.formatting import PhoneNumber
 
 
 TOKEN = os.environ['BOT_TOKEN']
@@ -17,7 +19,7 @@ def create_message(
     return f"Записался клиент:\n" \
         f"{month} - {day} число - {time}\n" \
         f"{client_firstname} {client_lastname}\n" \
-        f"{client_phone}"
+        f'{client_phone.replace("(","").replace(")","").replace(" ", "").replace("-","")}'
 
 
 async def bot_notification(
@@ -32,6 +34,6 @@ async def bot_notification(
     bot = Bot(TOKEN, session=session)
     message = create_message(
         client_firstname, client_lastname, client_phone, month, day, time)
-    await bot.send_message(915877828, message)
-    await bot.send_message(5833095324, message)
+    await bot.send_message(915877828, message, parse_mode=ParseMode.HTML)
+    # await bot.send_message(5833095324, message)  # для продакшна
     await session.close()

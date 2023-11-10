@@ -1,13 +1,12 @@
 import pygsheets
 import json
 import os
-from typing import List
 from vita_app.entities import Month
 from vita_app.service_file import json_dict
 
 
-def read_worksheet() -> List[Month]:
-    calendar: List[Month] = []
+def read_worksheet() -> list[Month]:
+    calendar: list[Month] = []
     service_file = open("service_file.json", "w")
     json.dump(json_dict, service_file)
     service_file.close()
