@@ -1,4 +1,4 @@
-_days_of_week = {
+days_of_week = {
     0: "Понедельник",
     1: "Вторник",
     2: "Среда",
@@ -8,7 +8,7 @@ _days_of_week = {
     6: "Воскресенье"
 }
 
-_times = {
+times = {
     0: "8:30",
     1: "11:00",
     2: "13:30",
@@ -67,9 +67,8 @@ class Day:
 
 class Month():
 
-    def __init__(self, days: list[Day], matrix, title):
+    def __init__(self, days: list[Day], title):
         self.days = days
-        self.matrix = matrix
         self.title = title
 
     @classmethod
@@ -82,26 +81,16 @@ class Month():
                     continue
                 day = Day(
                     number=matrix[row][col],
-                    day_of_week=_days_of_week[col],
+                    day_of_week=days_of_week[col],
                     events=[
                         Event(
-                            time=_times.get(x),
+                            time=times.get(x),
                             value=matrix[row + 1 + x][col]
-                        ) for x in _times
+                        ) for x in times
                     ],
                 )
                 days.append(day)
-        return cls(days, matrix, title)
-
-    def find_event_inside_matrix(self, day_number: int, event_number: int):
-        num_of_rows = len(self.matrix)
-        for row in range(0, num_of_rows, 6):
-            for col in range(0, 7):
-                if day_number == self.matrix[row][col]:
-                    x = row + 1 + event_number
-                    y = col
-                    return x, y
-        return None
+        return cls(days, title)
 
     def to_dict(self):
         return {

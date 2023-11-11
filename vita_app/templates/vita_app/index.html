@@ -1,129 +1,116 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
 {% load static %}
+
 {% block title %}
-    Запись на маникюр
+Запись на маникюр
 {% endblock title %}
+
 {% block body %}
-    <script>
-        const data = function() {
-            return {
-                months: [],
-                is_loading: true,
-                selected_month: '',
-                selected_day: '',
-                selected_event: '',
-                is_increasing_needed: false,
-                is_rewrite_needed: false
-            }
+<script>
+    const data = function () {
+        return {
+            months: [],
+            is_loading: true,
+            selected_month: '',
+            selected_day: '',
+            selected_event: '',
+            is_increasing_needed: false,
+            is_rewrite_needed: false
         }
-    </script>
-    <div x-data="data()" class="container text-center">
-        <div class="row vh-100 align-items-center">
-            <div class="col">
-                <div class="spinner-border text-primary"
-                     style="width: 4rem;
-                            height: 4rem"
-                     role="status"
-                     x-show="is_loading">
+    }
+</script>
+<div x-data="data()" class="container text-center">
+    <div class="row vh-100 align-items-center">
+        <div class="col">
+            <div x-show="is_loading" class="spinner-border text-primary" style="width: 4rem;
+                            height: 4rem" role="status">
+            </div>
+            <div x-show="!is_loading" x-cloak>
+                <h1>
+                    Записаться на маникюр
+                </h1>
+
+                <br />
+
+                <div class="d-flex justify-content-between">
+                    <div class="form-check form-switch text-start">
+                        <input x-model="is_increasing_needed" class="form-check-input" type="checkbox" role="switch"
+                            id="flexSwitchCheck1" />
+                        <label class="form-check-label" for="flexSwitchCheck1">
+                            Мне нужно наращивание
+                        </label>
+                    </div>
+                    <div class="form-check form-switch form-check-reverse">
+                        <label class="form-check-label" for="flexSwitchCheck2">
+                            Мне нужно перезаписаться
+                        </label>
+                        <input x-model="is_rewrite_needed" class="form-check-input" type="checkbox" role="switch"
+                            id="flexSwitchCheck2" />
+                    </div>
                 </div>
-                <div x-show="!is_loading" x-cloak>
-                    <h1>
-                        Записаться на маникюр
-                    </h1>
-                    <br>
-                    <div class="d-flex justify-content-between">
-                        <div class="form-check form-switch text-start">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   role="switch"
-                                   id="flexSwitchCheck1"
-                                   x-model="is_increasing_needed">
-                            <label class="form-check-label" for="flexSwitchCheck1">
-                                Мне нужно наращивание
-                            </label>
-                        </div>
-                        <div class="form-check form-switch form-check-reverse">
-                            <label class="form-check-label" for="flexSwitchCheck2">
-                                Мне нужно перезаписаться
-                            </label>
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   role="switch"
-                                   id="flexSwitchCheck2"
-                                   x-model="is_rewrite_needed">
-                        </div>
-                    </div>
-                    <br>
-                    {% include "vita_app/non_released.html" %}
-                    <div x-transition:enter.duration.500ms
-                         x-show="!(is_increasing_needed || is_rewrite_needed)"
-                         x-init="fetch('load_data/').then(response => response.json()).then(response => {months = response; is_loading = false})">
-                        <form action=""
-                              method="post"
-                              id="id_date_form"
-                              class="needs-validation"
-                              novalidate>
-                            {% csrf_token %}
-                            <select name="select_month"
-                                    id="id_month"
-                                    x-model="selected_month"
-                                    class="form-select"
-                                    required>
-                                <option value="">
-                                    <span>Выберите месяц</span>
+
+                <br />
+
+                {% include "vita_app/non_released.html" %}
+
+                <div x-transition:enter.duration.500ms x-show="!(is_increasing_needed || is_rewrite_needed)"
+                    x-init="fetch('load_data/').then(response => response.json()).then(response => {months = response; is_loading = false})">
+                    <form action="" method="post" id="id_date_form" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <select name="select_month" id="id_month" x-model="selected_month" class="form-select" required>
+                            <option value="">
+                                <span>Выберите месяц</span>
+                            </option>
+                            <template x-for="month in months">
+                                <option x-bind:value="month.title">
+                                    <span x-text="month.title"></span>
                                 </option>
-                                <template x-for="month in months">
-                                    <option x-bind:value="month.title">
-                                        <span x-text="month.title"></span>
-                                    </option>
-                                </template>
-                            </select>
-                            <br>
-                            <select name="select_day"
-                                    id="id_day"
-                                    x-model="selected_day"
-                                    class="form-select"
-                                    required>
-                                <option value="">
-                                    <span>Выберите день</span>
+                            </template>
+                        </select>
+
+                        <br />
+
+                        <select name="select_day" id="id_day" x-model="selected_day" class="form-select" required>
+                            <option value="">
+                                <span>Выберите день</span>
+                            </option>
+                            <template x-for="day in months.find((month) => month.title == selected_month).days">
+                                <option x-bind:value="day.number">
+                                    <span x-text="day.number + ' число - ' + day.day_of_week"></span>
                                 </option>
-                                <template x-for="day in months.find((month) => month.title == selected_month).days">
-                                    <option x-bind:value="day.number">
-                                        <span x-text="day.number + ' число - ' + day.day_of_week"></span>
-                                    </option>
-                                </template>
-                            </select>
-                            <br>
-                            <select name="select_event"
-                                    id="id_event"
-                                    x-model="selected_event"
-                                    class="form-select"
-                                    required>
-                                <option value="">
-                                    <span>Выберите время</span>
+                            </template>
+                        </select>
+
+                        <br />
+
+                        <select name="select_event" id="id_event" x-model="selected_event" class="form-select" required>
+                            <option value="">
+                                <span>Выберите время</span>
+                            </option>
+                            <template
+                                x-for="event in months.find((month) => month.title == selected_month).days.find((day) => day.number == selected_day).events">
+                                <option x-bind:value="event.time">
+                                    <span x-text="event.time"></span>
                                 </option>
-                                <template x-for="event in months.find((month) => month.title == selected_month).days.find((day) => day.number == selected_day).events">
-                                    <option x-bind:value="event.time">
-                                        <span x-text="event.time"></span>
-                                    </option>
-                                </template>
-                            </select>
-                            <br>
-                            <button id="id_submit"
-                                    class="btn btn-primary btn-lg d-grid gap-2 col-6 mx-auto">
-                                Записаться
-                            </button>
-                        </form>
-                        <button id="open_dialog"
-                                type="button"
-                                class="btn btn-primary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal">
+                            </template>
+                        </select>
+
+                        <br />
+
+                        <button id="id_submit" class="btn btn-primary btn-lg d-grid gap-2 col-6 mx-auto">
+                            Записаться
                         </button>
-                    </div>
+
+                    </form>
+
+                    <button id="open_dialog" type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal">
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-    {% include "vita_app/modal_window.html" %}
+</div>
+{% include "vita_app/modal_window.html" %}
 {% endblock body %}

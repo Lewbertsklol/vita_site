@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpRequest, JsonResponse, HttpResponseRedirect
-from vita_app.services import read_worksheet
+from vita_app.services import read_worksheet, write_worksheet
 from vita_app.bot import bot_notification
+from vita_app.entities import times
 import asyncio
 
 
@@ -15,14 +16,20 @@ def index(request: HttpRequest):
             request.session['first_name'] = request.POST['first_name']
             request.session['last_name'] = request.POST['last_name']
             request.session['phone'] = request.POST['phone']
-            asyncio.run(bot_notification(
-                request.session['first_name'],
-                request.session['last_name'],
-                request.session['phone'],
+            if write_worksheet(
                 request.session['month'],
                 request.session['day'],
-                request.session['event']
-            ))
+                list(times.keys())[list(times.values()).index(request.session['event'])],
+                request.session['phone']
+            ):
+                asyncio.run(bot_notification(
+                    request.session['first_name'],
+                    request.session['last_name'],
+                    request.session['phone'],
+                    request.session['month'],
+                    request.session['day'],
+                    request.session['event']
+                ))
             return render(request, 'vita_app/modal.html')
     return render(request, 'vita_app/index.html')
 

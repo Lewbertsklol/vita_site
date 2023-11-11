@@ -35,5 +35,5 @@ async def bot_notification(
     message = create_message(
         client_firstname, client_lastname, client_phone, month, day, time)
     await bot.send_message(915877828, message, parse_mode=ParseMode.HTML)
-    # await bot.send_message(5833095324, message)  # для продакшна
+    # await bot.send_message(5833095324, message)  #! для Виолетты
     await session.close()
